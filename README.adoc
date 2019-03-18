@@ -1,6 +1,6 @@
 = CArrayList
-Array list implementation in C
-
+Array list implementation, written in C. Also implements an iterator.
+ 
 == Usage
 
 New ArrayLists are constructed by calling ArrayList_make(). The parameter
