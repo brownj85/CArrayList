@@ -1,2 +1,81 @@
-# CArrayList
-array list written in C
+= CArrayList
+Array list implementation in C
+
+== Usage
+
+New ArrayLists are constructed by calling ArrayList_make(). The parameter
+elem_size defines the the data width of the elements that will be contained
+in the ArrayList. If _alloc_ is false, the arrayList, no memory
+will be allocated for the arrayList until an element is inserted.
+The contents of an array are stored on the heap, and must be
+freed by call to arrayList_free.
+[source, c]
+----
+arrayList int_list = arrayList_make(sizeof(int), true);
+
+arrayList ptr_list = arrayList_make(sizeof(void*), true);
+
+arrayList empty_int_list = arrayList_make(sizeof(int), false);
+----
+
+New elements are inserted using arrayList_append. Note that
+elements are inserted by value, not by reference:
+
+[source, c]
+----
+int a = 3;
+
+arrayList_append(&int_list, &a);
+
+int *a_ptr = &a;
+
+arrayList_append(&ptr_list, &a_ptr);
+----
+
+Elements may be retrieved either by value or by reference. 
+
+The arrayList_get_ptr function returns a pointer to the
+element at the given index but the returned pointer 
+may be made invalid subsequent calls to arrayList_append.
+This function must be used with care.
+
+The arrayList_get_cpy function copies the element
+at the given index to a provided memory buffer. 
+
+[source, c]
+----
+int *my_ptr = arrayList_get_ptr(int_list, 5);
+
+int my_int;
+arrayList_get_cpy(&int_list, 5, my_int);
+
+(my_int == *my_ptr) //true
+
+int new_int = 3;
+arrayList_append(&int_list, &new_int);
+
+int temp = *my_ptr; //may cause segfault
+----
+
+See the documentation in the source files for further usage instructions.
+
+== Iterators
+
+Iterators are also provided.
+
+An 'iterator' to an arrayList is simply a pointer. This pointer can be initialized
+by calling either aL_first or aL_idx and incremented using the aL_next 
+function. The aL_done function returns a pointer to the the end of the arrayList.
+
+Iterators should be used according to the following pattern:
+
+[source, c]
+----
+int *iter;
+for(iter = aL_first(&int_list); iter != aL_done(&int_list); iter = aL_next(&int_list, iter)){
+    do_something(*iter);
+}
+----
+
+== Author
+Jack Brown
